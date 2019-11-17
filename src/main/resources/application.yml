@@ -1,0 +1,34 @@
+---
+micronaut:
+  application:
+    name: log-store
+
+---
+elasticsearch:
+  httpHosts: "http://localhost:9200,http://127.0.0.2:9200"
+---
+datasources.default: {}
+---
+micronaut:
+  metrics:
+    enabled: true
+    export:
+      elastic:
+        enabled: true
+        step: PT1M
+---
+hibernate:
+  hbm2ddl:
+    auto: update
+  cache:
+    queries: false
+    use_second_level_cache: true
+    use_query_cache: false
+    # region.factory_class: org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory
+dataSource:
+  url: jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
+  pooled: true
+  jmxExport: true
+  driverClassName: org.h2.Driver
+  username: sa
+  password: ''       

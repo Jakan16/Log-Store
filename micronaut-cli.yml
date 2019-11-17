@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: log.store
+---
+testFramework: spock
+sourceLanguage: groovy

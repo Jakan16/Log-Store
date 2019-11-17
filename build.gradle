@@ -1,0 +1,67 @@
+plugins {
+    id "groovy"
+    id "com.google.cloud.tools.jib" version "0.9.9"
+    id "com.github.johnrengelman.shadow" version "5.0.0"
+    id "application"
+}
+
+
+
+version "0.1"
+group "log.store"
+
+repositories {
+    mavenCentral()
+    maven { url "https://jcenter.bintray.com" }
+}
+
+configurations {
+    // for dependencies that are needed for development only
+    developmentOnly 
+}
+
+dependencies {
+    compileOnly platform("io.micronaut:micronaut-bom:$micronautVersion")
+    compileOnly "io.micronaut:micronaut-inject-groovy"
+    implementation platform("io.micronaut:micronaut-bom:$micronautVersion")
+    implementation "io.micronaut:micronaut-management"
+    implementation "io.micronaut:micronaut-runtime-groovy"
+    implementation "io.micronaut:micronaut-validation"
+    implementation "io.micronaut.configuration:micronaut-elasticsearch"
+    implementation "io.micronaut.configuration:micronaut-liquibase"
+    implementation "io.micronaut.kubernetes:micronaut-kubernetes-discovery-client"
+    implementation "io.micronaut:micronaut-http-client"
+    implementation "io.micronaut.configuration:micronaut-jdbc-hikari"
+    implementation "io.micronaut.configuration:micronaut-micrometer-core"
+    implementation "io.micronaut.configuration:micronaut-micrometer-registry-elastic"
+    implementation "io.micronaut.configuration:micronaut-hibernate-validator"
+    implementation "io.micronaut.configuration:micronaut-hibernate-gorm"
+    implementation "io.micronaut:micronaut-http-server-netty"
+    runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
+    runtimeOnly "com.h2database:h2"
+    runtimeOnly "org.apache.tomcat:tomcat-jdbc"
+    testCompileOnly platform("io.micronaut:micronaut-bom:$micronautVersion")
+    testImplementation platform("io.micronaut:micronaut-bom:$micronautVersion")
+    testImplementation("org.spockframework:spock-core") {
+        exclude group: "org.codehaus.groovy", module: "groovy-all"
+    }
+    testImplementation "io.micronaut:micronaut-inject-groovy"
+    testImplementation "io.micronaut.test:micronaut-test-spock"
+    testImplementation "io.micronaut.test:micronaut-test-junit5"
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:5.5.0"
+}
+
+test.classpath += configurations.developmentOnly
+
+mainClassName = "log.store.Application"
+jib.to.image = 'gcr.io/log-store/jib-image'
+tasks.withType(GroovyCompile) {
+    groovyOptions.forkOptions.jvmArgs.add('-Dgroovy.parameters=true')
+}
+
+shadowJar {
+    mergeServiceFiles()
+}
+
+run.classpath += configurations.developmentOnly
+run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote')
