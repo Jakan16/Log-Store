@@ -1,4 +1,4 @@
-package log.store
+package logstore.unit
 
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.runtime.server.EmbeddedServer

@@ -1,4 +1,4 @@
-package log.store
+package logstore
 
 import io.micronaut.runtime.Micronaut
 import groovy.transform.CompileStatic
