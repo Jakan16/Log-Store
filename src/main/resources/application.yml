@@ -1,11 +1,15 @@
 ---
 micronaut:
   application:
-    name: log-store
+    name: logstore
 
 ---
 elasticsearch:
-  httpHosts: "http://localhost:9200,http://127.0.0.2:9200"
+  datastoreImpl: hibernate
+  httpHosts: "http://localhost:9200,http://localhost:9300"
+  cluster.name: esdb
+  disableAutoIndex: false
+  bulkIndexOnStartup: true
 ---
 datasources.default: {}
 ---
@@ -21,10 +25,10 @@ hibernate:
   hbm2ddl:
     auto: update
   cache:
-    queries: false
-    use_second_level_cache: true
-    use_query_cache: false
-    # region.factory_class: org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory
+     queries: false
+     use_second_level_cache: true
+     use_query_cache: false
+     region.factory_class: org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory
 dataSource:
   url: jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
   pooled: true

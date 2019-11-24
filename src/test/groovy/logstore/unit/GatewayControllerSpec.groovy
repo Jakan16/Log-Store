@@ -1,6 +1,8 @@
 package logstore.unit
 
+import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.annotation.Client
+import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.test.annotation.MicronautTest
 import io.micronaut.http.client.RxHttpClient
@@ -21,11 +23,15 @@ class GatewayControllerSpec extends Specification {
     @Shared @AutoCleanup @Inject @Client("/")
     RxHttpClient client
 
-    void "test index"() {
-        given:
-        HttpResponse response = client.toBlocking().exchange("/gateway")
+    void "test invalid request gives error response"() {
+        when:
+        def body = ["method" : "I AM INVALID"]
+        def request = HttpRequest.POST("/gateway", body)
+        HttpResponse<Map> response = client.toBlocking().exchange(request, Map)
 
-        expect:
-        response.status == HttpStatus.OK
+        then:
+        HttpClientResponseException e = thrown()
+        e.status == HttpStatus.BAD_REQUEST
+        'error' in e.response.body()
     }
 }
