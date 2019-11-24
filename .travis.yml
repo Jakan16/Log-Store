@@ -5,17 +5,15 @@ os: linux
 dist: trusty
 jdk: oraclejdk11
 
-stages:
+jobs:
   include:
-    if: NOT branch IN (master, stage, develop)
-    script:
-      - ./gradlew test log-store.controller* #remove this
-      - ./gradlew test log-store.unit*
+    - stage: unit-test
+      script: "./gradlew test log-store.controller* #remove if it works
+      if: (NOT (branch IN (master, stage, develop)))
+    - stage: test-all
+      script: "./gradlew build -s"
+      if: (branch IN (master, stage, develop))
+    - stage: deploy
+      script: "echo deployment stuff"
+      if: (branch IN (master, stage, develop))    
 
-    if: branch IN (master, stage, develop)
-    script:
-      - ./gradlew build -s
-      # DEPLOYMENT
-
-script:
-  - ./test
