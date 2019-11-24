@@ -5,7 +5,7 @@ os: linux
 dist: trusty
 jdk: oraclejdk11
 
-jobs:
+stages:
   include:
     if: NOT branch IN (master, stage, develop)
     script:
@@ -16,3 +16,6 @@ jobs:
     script:
       - ./gradlew build -s
       # DEPLOYMENT
+
+script:
+  - ./test
