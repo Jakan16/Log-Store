@@ -9,7 +9,7 @@ jobs:
   include:
     - stage: unit-test
       script: "echo Only performing unit tests" 
-      script: "./gradlew test --tests log-store.unit*"
+      script: "./gradlew test --tests logstore.unit*"
       if: (NOT (branch IN (master, stage, develop)))
     - stage: test-all
       script: "echo Running all tests"
