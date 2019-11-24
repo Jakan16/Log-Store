@@ -8,7 +8,7 @@ jdk: oraclejdk11
 jobs:
   include:
     - stage: unit-test
-      script: "./gradlew test log-store.controller* #remove if it works
+      script: "./gradlew test log-store.controller*" #remove if it works
       if: (NOT (branch IN (master, stage, develop)))
     - stage: test-all
       script: "./gradlew build -s"
