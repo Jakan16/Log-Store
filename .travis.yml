@@ -1,0 +1,21 @@
+language: groovy
+install: true
+
+os: linux
+dist: trusty
+jdk: oraclejdk11
+
+jobs:
+  include:
+    - stage: unit-test
+      script: "echo Only performing unit tests" 
+      script: "./gradlew test --tests logstore.unit*"
+      if: (NOT (branch IN (master, stage, develop)))
+    - stage: test-all
+      script: "echo Running all tests"
+      script: "./gradlew build -s"
+      if: (branch IN (master, stage, develop))
+    - stage: deploy
+      script: "echo Deployment stuff"
+      if: (branch IN (master, stage, develop))    
+
