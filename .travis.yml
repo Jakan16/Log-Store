@@ -5,5 +5,12 @@ os: linux
 dist: trusty
 jdk: oraclejdk11
 
-script:
-  - ./gradlew build -s
+if: NOT branch IN (master, stage, develop)
+  script:
+    - ./gradlew test log-store.controller* #remove this
+    - ./gradlew test log-store.unit*
+
+if: branch IN (master, stage, develop)
+  script:
+    - ./gradlew build -s
+    # DEPLOYMENT

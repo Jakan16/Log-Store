@@ -1,0 +1,17 @@
+version: '3.3'
+services:
+  esdb:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.2
+    container_name: esdb
+    ports:
+      - "9200:9200"
+    environment:
+      - "discovery.type=single-node"
+      # - "transport.host=127.0.0.1"
+      - "xpack.security.enabled=false"
+    volumes:
+      # create a data_db dir, likely in /var/lib/docker/volumes
+      - "esdb:/usr/share/elasticsearch/data"
+
+volumes:
+  esdb:
