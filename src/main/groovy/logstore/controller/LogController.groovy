@@ -14,14 +14,25 @@ class LogController {
     LogService logService
 
     HttpResponse saveLog(Map request) {
-        LogModel log = TestData.createLog("1")
-        RestStatus saved = logService.saveLog(log)
-        saved == RestStatus.CREATED ?
+        LogModel log = TestData.createLog("42")
+        Map saved = logService.saveLog(log)
+        saved['status'] == RestStatus.CREATED ?
                 HttpResponse.created(saved) :
                 HttpResponse.serverError(["error" : "something went wrong when saving the log"])
     }
 
+    HttpResponse getLog(Map request) {
+        String pathVariable = request['path'].substring(1)
+        Map response = logService.getLogById(pathVariable)
+        response.status == RestStatus.OK ?
+                HttpResponse.ok(response.content) :
+                HttpResponse.serverError(["error" : "something went wrong when retrieving the logs"])
+    }
+
     HttpResponse getLogs(Map request) {
+        if(request['path'] && (String) request['path'].startsWith('/')) {
+            return getLog(request)
+        }
         Map response = logService.getLogs()
         response.status == RestStatus.OK ?
                 HttpResponse.ok(["results" : response.num_results, "content" : response.content]) :

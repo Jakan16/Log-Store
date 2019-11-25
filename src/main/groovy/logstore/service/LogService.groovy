@@ -18,11 +18,22 @@ class LogService {
     @Inject
     RestHighLevelClient client
 
-    RestStatus saveLog(LogModel inputLog) {
+    Map saveLog(LogModel inputLog) {
         Map fields = inputLog.toMap()
         IndexRequest request = new IndexRequest("logs").source(fields)
         IndexResponse response = client.index(request, RequestOptions.DEFAULT)
-        response.status()
+        ['status' : response.status(), 'id' : response.id]
+    }
+
+    Map getLogById(String id) {
+        SearchRequest log = new SearchRequest("logs")
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
+        searchSourceBuilder.query(QueryBuilders.idsQuery().addIds(id))
+        log.source(searchSourceBuilder)
+        SearchResponse response = client.search(log, RequestOptions.DEFAULT)
+        RestStatus responseStatus = response.status()
+        List<Map> result = response.hits.collect { it.sourceAsMap }
+        ["status" : responseStatus, "content" : result[0]]
     }
 
     Map getLogs() {
@@ -33,7 +44,7 @@ class LogService {
         SearchResponse response = client.search(logs, RequestOptions.DEFAULT)
         RestStatus responseStatus = response.status()
         List<Map> results = response.hits.collect { it.sourceAsMap }
-        ["status" : responseStatus, "num_results" : results.size(), "content" : results]
+        ["status" : responseStatus, "num_results" : results.size(), "content" : results] //, "stuff": response.hits.collect {it}]
     }
 
 }
