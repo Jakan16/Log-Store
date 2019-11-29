@@ -10,7 +10,7 @@ class LogModel {
 
     List<String> tags
 
-    Map content
+    String content
 
     Map toMap() {
         Map fields = [

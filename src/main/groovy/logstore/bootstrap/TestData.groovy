@@ -10,10 +10,7 @@ class TestData {
                 timestamp: "24-11-2019",
                 logType: "log",
                 tags: ["log"],
-                content: [
-                        "log_field_1": "xyzxyz",
-                        "log_field_2": "xyzxyz",
-                ]
+                content: "log_field_1 : xyzxyz, log_field_2 : xyzxyz"
         )
     }
 

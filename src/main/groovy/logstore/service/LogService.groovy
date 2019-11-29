@@ -1,6 +1,8 @@
 package logstore.service
 
 import logstore.domain.LogModel
+import org.elasticsearch.action.get.GetRequest
+import org.elasticsearch.action.get.GetResponse
 import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.index.IndexResponse
 import org.elasticsearch.action.search.SearchRequest
@@ -26,14 +28,13 @@ class LogService {
     }
 
     Map getLogById(String id) {
-        SearchRequest log = new SearchRequest("logs")
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
-        searchSourceBuilder.query(QueryBuilders.idsQuery().addIds(id))
-        log.source(searchSourceBuilder)
-        SearchResponse response = client.search(log, RequestOptions.DEFAULT)
-        RestStatus responseStatus = response.status()
-        List<Map> result = response.hits.collect { it.sourceAsMap }
-        ["status" : responseStatus, "content" : result[0]]
+        GetRequest getIdRequest = new GetRequest(index: "logs", id: id)
+        GetResponse response = client.get(getIdRequest, RequestOptions.DEFAULT)
+        if (!response.exists) {
+            return ["status" : RestStatus.NOT_FOUND, "content" : null]
+        }
+        Map result = response.sourceAsMap
+        ["status" : RestStatus.OK, "content" : result]
     }
 
     Map getLogs() {
@@ -44,7 +45,7 @@ class LogService {
         SearchResponse response = client.search(logs, RequestOptions.DEFAULT)
         RestStatus responseStatus = response.status()
         List<Map> results = response.hits.collect { it.sourceAsMap }
-        ["status" : responseStatus, "num_results" : results.size(), "content" : results] //, "stuff": response.hits.collect {it}]
+        ["status" : responseStatus, "num_results" : results.size(), "content" : results]
     }
 
 }
