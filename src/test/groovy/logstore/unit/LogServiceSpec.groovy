@@ -1,24 +1,18 @@
 package logstore.unit
 
 import io.micronaut.context.ApplicationContext
-import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.context.annotation.Factory
+import io.micronaut.context.annotation.Replaces
 import logstore.bootstrap.TestData
 import logstore.service.LogService
-import org.apache.http.HttpHost
-import org.elasticsearch.client.RestClient
-import org.elasticsearch.client.RestHighLevelClient
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder
 import org.elasticsearch.rest.RestStatus
 import org.testcontainers.elasticsearch.ElasticsearchContainer
-import org.testcontainers.spock.Testcontainers
 import spock.lang.AutoCleanup
-import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Shared
+import javax.inject.Singleton
 
-import javax.inject.Inject
-
-@Ignore
-@Testcontainers
 class LogServiceSpec extends Specification {
 
     @Shared
@@ -27,33 +21,24 @@ class LogServiceSpec extends Specification {
     @Shared
     LogService logService
 
-    @Shared @Inject @AutoCleanup
-    RestHighLevelClient client
-
-    @Shared @Inject @AutoCleanup
-    EmbeddedServer embeddedServer
+    @Shared @AutoCleanup
+    ApplicationContext applicationContext
 
     void setupSpec() {
         container.start()
-        embeddedServer = ApplicationContext
-                .build()
-                .properties(
-                            'httpHosts':"${container.httpHostAddress}",
-                            'cluster.name':'docker-cluster'
-                )
-                .packages('logstore')
-                .environments('test')
-                .run(EmbeddedServer)
-        def rClientBuilder = RestClient.builder(HttpHost.create(container.httpHostAddress))
-        client = new RestHighLevelClient(rClientBuilder)
-        logService = embeddedServer.applicationContext.createBean(LogService, embeddedServer.URL)
+        applicationContext = ApplicationContext.run(
+                ["elasticsearch.httpHosts": "http://${container.httpHostAddress}",
+                "elasticsearch.cluster.name": "docker-cluster"],
+                "test"
+        )
+        logService = applicationContext.getBean(LogService)
     }
 
-    void "test logs are saved and can be retrieved"() {
-        setup:
-        def log42 = TestData.createLog("42")
-        def log21 = TestData.createLog("21")
+    static log42 = TestData.createLog("42")
+    static log21 = TestData.createLog("21")
+    static Map logIds = [:]
 
+    void "test logs are saved and can be retrieved"() {
         when:
         Map response42 = logService.saveLog(log42)
         Map response21 = logService.saveLog(log21)
@@ -65,19 +50,38 @@ class LogServiceSpec extends Specification {
         response21.id
 
         when:
-        Map responseGetAll = logService.getLogs()
+        logIds["log42"] = response42.id
+        logIds["log21"] = response21.id
 
         then:
-        responseGetAll.status == RestStatus.OK
-        responseGetAll.num_results == 2
-        responseGetAll.content.size() == 2
+        true
+    }
+
+    void "test saved logs can be retrieved"() {
+        when:
+        Map responseGetById42 = logService.getLogById((String) logIds["log42"])
+
+        then:
+        responseGetById42.status == RestStatus.OK
+        responseGetById42.content['agent_id'] == log42.agentID
+        responseGetById42.content['content'] == log42.content
 
         when:
-        Map responseGetById = logService.getLogById(response42.id)
+        Map responseGetById21 = logService.getLogById((String) logIds["log21"])
 
         then:
-        responseGetById.status == RestStatus.OK
-        responseGetById.content['agent_id'] == '42'
+        responseGetById21.status == RestStatus.OK
+        responseGetById21.content['agent_id'] == log21.agentID
+        responseGetById21.content['content'] == log21.content
+    }
+
+    @Factory
+    static class HttpAsyncClientBuilderFactory {
+        @Replaces(HttpAsyncClientBuilder.class)
+        @Singleton
+        HttpAsyncClientBuilder builder() {
+            HttpAsyncClientBuilder.create()
+        }
     }
 
 }
