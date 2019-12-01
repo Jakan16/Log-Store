@@ -1,3 +1,11 @@
+sudo: required
+
+services:
+  - docker
+env:
+  - IMAGE_NAME=logops/log-store
+  - VERSION=1.0.0-SNAPSHOT
+
 language: groovy
 install: true
 
@@ -7,12 +15,26 @@ jdk: oraclejdk11
 
 jobs:
   include:
+
     - stage: unit-test
-      script: "echo Only performing unit tests && ./gradlew test --tests logstore.unit*"
+      script:
+        - "echo Only performing unit tests"
+        - "./gradlew test --tests logstore.unit*"
       if: (NOT (branch IN (master, stage, develop)))
+
     - stage: test-all
-      script: "echo Running all tests && ./gradlew build -s"
+      script:
+        - "echo Running all tests"
+        - "./gradlew build -s"
       if: (branch IN (master, stage, develop))
+
+    - stage: docker-build-and-push
+      script:
+        - docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
+        - docker build -t "${IMAGE_NAME}:${VERSION}" .
+        - docker push ${IMAGE_NAME}:${VERSION}"
+      if: (branch IN (master, stage, develop))
+
     - stage: deploy
       script: "echo Deployment stuff"
       if: (branch IN (master, stage, develop))    
