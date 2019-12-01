@@ -3,8 +3,9 @@ sudo: required
 services:
   - docker
 env:
-  - IMAGE_NAME=logops/log-store
-  - VERSION=1.0.0-SNAPSHOT
+  global:
+    - IMAGE_NAME=logops/log-store
+    - VERSION=1.0.0-SNAPSHOT
 
 language: groovy
 install: true
