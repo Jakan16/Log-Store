@@ -27,7 +27,6 @@ jobs:
       if: (branch IN (master, stage, develop))
 
 deploy:
-  provider: script
   script:
     - docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
     - docker build -t "${IMAGE_NAME}:${VERSION}" .
