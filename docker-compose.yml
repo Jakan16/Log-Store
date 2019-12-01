@@ -1,17 +1,30 @@
 version: '3.3'
 services:
+  logstore:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      - esdb
+
   esdb:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.4.2
     container_name: esdb
     ports:
       - "9200:9200"
+      - "9300:9300"
     environment:
       - "discovery.type=single-node"
+      - "cluster.name=esdb"
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "http.cors.enabled=true"
       # - "transport.host=127.0.0.1"
       - "xpack.security.enabled=false"
-    volumes:
+    #volumes:
       # create a data_db dir, likely in /var/lib/docker/volumes
-      - "esdb:/usr/share/elasticsearch/data"
+      # - "esdb:/usr/share/elasticsearch/data"
 
-volumes:
-  esdb:
+# volumes:
+  # esdb:

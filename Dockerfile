@@ -1,4 +1,4 @@
 FROM adoptopenjdk/openjdk11-openj9:jdk-11.0.1.13-alpine-slim
-COPY build/libs/log-store-*-all.jar log-store.jar
+COPY build/libs/logstore-*-all.jar logstore.jar
 EXPOSE 8080
-CMD java -Dcom.sun.management.jmxremote -noverify ${JAVA_OPTS} -jar log-store.jar
+CMD java -Dcom.sun.management.jmxremote -noverify ${JAVA_OPTS} -jar logstore.jar

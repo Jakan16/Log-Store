@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "log-store"
+  name: "logstore"
 spec:
   selector:
     matchLabels:
-      app: "log-store"
+      app: "logstore"
   template:
     metadata:
       labels:
-        app: "log-store"
+        app: "logstore"
     spec:
       containers:
-        - name: "log-store"
-          image: "gcr.io/log-store/jib-image"
+        - name: "logstore"
+          image: "gcr.io/logstore/jib-image"
           ports:
             - name: http
               containerPort: 8080
@@ -34,10 +34,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: "log-store"
+  name: "logstore"
 spec:
   selector:
-    app: "log-store"
+    app: "logstore"
   type: LoadBalancer
   ports:
     - protocol: "TCP"

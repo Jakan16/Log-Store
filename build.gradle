@@ -5,14 +5,13 @@ plugins {
     id "application"
 }
 
-
-
 version "0.1"
-group "log-store"
+group "logstore"
 
 repositories {
     mavenCentral()
     maven { url "https://jcenter.bintray.com" }
+    maven { url "https://repo.grails.org/grails/core" }
 }
 
 configurations {
@@ -28,18 +27,24 @@ dependencies {
     implementation "io.micronaut:micronaut-runtime-groovy"
     implementation "io.micronaut:micronaut-validation"
     implementation "io.micronaut.configuration:micronaut-elasticsearch"
-    implementation "io.micronaut.configuration:micronaut-liquibase"
+    //implementation "io.micronaut.configuration:micronaut-liquibase"
     implementation "io.micronaut.kubernetes:micronaut-kubernetes-discovery-client"
     implementation "io.micronaut:micronaut-http-client"
-    implementation "io.micronaut.configuration:micronaut-jdbc-hikari"
+    //implementation "io.micronaut.configuration:micronaut-jdbc-hikari"
     implementation "io.micronaut.configuration:micronaut-micrometer-core"
     implementation "io.micronaut.configuration:micronaut-micrometer-registry-elastic"
-    implementation "io.micronaut.configuration:micronaut-hibernate-validator"
-    implementation "io.micronaut.configuration:micronaut-hibernate-gorm"
+    //implementation "io.micronaut.configuration:micronaut-hibernate-validator"
+    //implementation "io.micronaut.configuration:micronaut-hibernate-gorm"
     implementation "io.micronaut:micronaut-http-server-netty"
-    runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
-    runtimeOnly "com.h2database:h2"
-    runtimeOnly "org.apache.tomcat:tomcat-jdbc"
+    //implementation "org.hibernate:hibernate-core:5.1.5.Final"
+    //implementation "org.grails.plugins:elasticsearch:2.4.0"
+    //implementation "org.apache.logging.log4j:log4j-core:2.7"
+    implementation "org.elasticsearch.client:elasticsearch-rest-high-level-client"
+    implementation "ch.qos.logback:logback-classic:1.2.3"
+    //implementation "org.apache.httpcomponents:httpcore-nio:4.3"
+    //runtimeOnly "com.h2database:h2"
+    //runtimeOnly "org.apache.tomcat:tomcat-jdbc"
+    //runtime "org.hibernate:hibernate-ehcache:5.1.9.Final"
     testCompileOnly platform("io.micronaut:micronaut-bom:$micronautVersion")
     testImplementation platform("io.micronaut:micronaut-bom:$micronautVersion")
     testImplementation("org.spockframework:spock-core") {
@@ -48,13 +53,22 @@ dependencies {
     testImplementation "io.micronaut:micronaut-inject-groovy"
     testImplementation "io.micronaut.test:micronaut-test-spock"
     testImplementation "io.micronaut.test:micronaut-test-junit5"
+    testImplementation "io.micronaut.configuration:micronaut-elasticsearch"
+    testImplementation "org.elasticsearch.client:elasticsearch-rest-high-level-client"
+    //testImplementation "org.grails.plugins:elasticsearch:2.4.0"
+    testImplementation 'org.testcontainers:testcontainers:1.9.0-rc2'
+    testImplementation 'org.testcontainers:spock:1.9.0-rc2'
+    testImplementation "org.testcontainers:elasticsearch:1.12.3"
+    testImplementation "ch.qos.logback:logback-classic:1.2.3"
+    //testImplementation "org.apache.logging.log4j:log4j-core:2.7"
+    //testImplementation "org.apache.httpcomponents:httpcore-nio:4.3"
     testRuntimeOnly "org.junit.vintage:junit-vintage-engine:5.5.0"
 }
 
 test.classpath += configurations.developmentOnly
 
-mainClassName = "log.store.Application"
-jib.to.image = 'gcr.io/log-store/jib-image'
+mainClassName = "logstore.Application"
+jib.to.image = 'gcr.io/logstore/jib-image'
 tasks.withType(GroovyCompile) {
     groovyOptions.forkOptions.jvmArgs.add('-Dgroovy.parameters=true')
 }
