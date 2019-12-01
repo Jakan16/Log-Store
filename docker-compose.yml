@@ -1,11 +1,13 @@
 version: '3.3'
 services:
   logstore:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: docker.io/logops/log-store:1.0.0-SNAPSHOT
+    #build:
+    #  context: .
+    #  dockerfile: Dockerfile
     ports:
       - 8080:8080
+    network_mode: host
     depends_on:
       - esdb
 
