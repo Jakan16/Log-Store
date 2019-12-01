@@ -1,4 +1,4 @@
-package logstore.unit
+package logstore.integration
 
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.annotation.Factory
