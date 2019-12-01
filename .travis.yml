@@ -28,8 +28,9 @@ jobs:
       if: (branch IN (master, stage, develop))
       
 after_success:
-  - docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
-  - docker build -t "${IMAGE_NAME}:${VERSION}" 
-  - docker push "${IMAGE_NAME}:${VERSION}"
-  - "echo Deployment stuff"
+  script:
+    - docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
+    - docker build -t "${IMAGE_NAME}:${VERSION}" 
+    - docker push "${IMAGE_NAME}:${VERSION}"
+    - "echo Deployment stuff"
   if: (branch IN (master, stage, develop))
