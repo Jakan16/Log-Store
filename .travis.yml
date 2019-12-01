@@ -9,33 +9,29 @@ env:
 
 language: groovy
 install: true
-
 os: linux
 dist: trusty
 jdk: oraclejdk11
 
 jobs:
   include:
-
     - stage: unit-test
       script:
         - "echo Only performing unit tests"
         - "./gradlew test --tests logstore.unit*"
       if: (NOT (branch IN (master, stage, develop)))
-
     - stage: test-all
       script:
         - "echo Running all tests"
         - "./gradlew build -s"
       if: (branch IN (master, stage, develop))
 
-    - stage: docker-build-and-push
-      script:
-        - docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
-        - docker build -t "${IMAGE_NAME}:${VERSION}" .
-        - docker push ${IMAGE_NAME}:${VERSION}"
-      if: (branch IN (master, stage, develop))
-
-    - stage: deploy
-      script: "echo Deployment stuff"
-      if: (branch IN (master, stage, develop))    
+deploy:
+  provider: script
+  script:
+    - docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
+    - docker build -t "${IMAGE_NAME}:${VERSION}" .
+    - docker push ${IMAGE_NAME}:${VERSION}"
+    - "echo Deployment stuff"
+    if: (branch IN (master, stage, develop))
+    
