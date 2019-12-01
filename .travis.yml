@@ -16,12 +16,16 @@ jdk: oraclejdk11
 jobs:
   include:
     - stage: unit-test
-      name: "unit-test"
-      script: "echo Only performing unit tests && ./gradlew test --tests logstore.unit*"
-    
+      script:
+        - "echo Only performing unit tests"
+        - "./gradlew test --tests logstore.unit*"
+      if: (NOT (branch IN (master, stage, develop)))
+
     - stage: test-all
-      name: "test-all"
-      script: "echo Running all tests && ./gradlew build -s"
+      script:
+        - "echo Running all tests"
+        - "./gradlew build -s"
+      if: (branch IN (master, stage, develop))
       
 after_success:
   script:
