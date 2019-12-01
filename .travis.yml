@@ -13,34 +13,25 @@ os: linux
 dist: trusty
 jdk: oraclejdk11
 
+stages:
+  - unit-test
+  if: (NOT (branch IN (master, stage, develop)))
+  - test-all
+  if: (branch IN (master, stage, develop))
+  - build-deploy
+  if: (branch IN (master, stage, develop))
+
 jobs:
   include:
-  
     - stage: unit-test
-      script:
-        - "echo Only performing unit tests"
-        - "./gradlew test --tests logstore.unit*"
-      if: (NOT (branch IN (master, stage, develop)))
+      script: "echo Only performing unit tests && ./gradlew test --tests logstore.unit*"
     
     - stage: test-all
-      script:
-        - "echo Running all tests"
-        - "./gradlew build -s"
-      if: (branch IN (master, stage, develop))
+      script: "echo Running all tests && ./gradlew build -s"
       
     - stage: build-deploy
-      after_success:
+      script:
         - docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
         - docker build -t "${IMAGE_NAME}:${VERSION}" .
         - docker push "${IMAGE_NAME}:${VERSION}"
         - "echo Deployment stuff"
-      if: (branch IN (master, stage, develop)) 
-
-deploy:
-  provider: script
-  script:
-    - docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
-    - docker build -t "${IMAGE_NAME}:${VERSION}" .
-    - docker push "${IMAGE_NAME}:${VERSION}"
-    - "echo Deployment stuff"
-  if: (branch IN (master, stage, develop)) 
