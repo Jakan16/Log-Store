@@ -29,6 +29,7 @@ jobs:
       
     - stage: build-deploy
       script:
+        - "./gradlew assemble"
         - docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
         - docker build -t "${IMAGE_NAME}:${VERSION}" . 
         - docker push "${IMAGE_NAME}:${VERSION}"
