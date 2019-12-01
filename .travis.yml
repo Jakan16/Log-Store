@@ -27,10 +27,10 @@ jobs:
         - "./gradlew build -s"
       if: (branch IN (master, stage, develop))
       
-after_success:
-  script:
-    - docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
-    - docker build -t "${IMAGE_NAME}:${VERSION}" 
-    - docker push "${IMAGE_NAME}:${VERSION}"
-    - "echo Deployment stuff"
-  if: (branch IN (master, stage, develop))
+    - stage: build-deploy
+      script:
+        - docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
+        - docker build -t "${IMAGE_NAME}:${VERSION}" 
+        - docker push "${IMAGE_NAME}:${VERSION}"
+        - "echo Deployment stuff"
+      if: (branch IN (master, stage, develop))
