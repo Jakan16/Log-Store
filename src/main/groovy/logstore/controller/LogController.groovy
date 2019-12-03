@@ -29,7 +29,7 @@ class LogController {
                 HttpResponse.serverError(["error" : "something went wrong when saving the log"])
     }
 
-    HttpResponse getLog(Map request) {
+    HttpResponse getLogById(Map request) {
         String pathVariable = request['path'].substring(1)
         Map response = logService.getLogById(pathVariable)
         if (response.status == RestStatus.OK) {
@@ -41,9 +41,23 @@ class LogController {
         HttpResponse.serverError(["error" : "something went wrong when retrieving the log"])
     }
 
+    HttpResponse getLogsByCustomer(Map request) {
+        String pathVariable = request['path'].substring('?customer_id='.length())
+        Map response = logService.getLogsByCustomer(pathVariable)
+        if (response.status == RestStatus.OK) {
+            return HttpResponse.ok(response.content)
+        }
+        if (response.status in errors) {
+            return (HttpResponse) errors[response.status]
+        }
+        HttpResponse.serverError(["error" : "something went wrong when retrieving the log"])
+    }
+
     HttpResponse getLogs(Map request) {
         if(request['path'] && (String) request['path'].startsWith('/')) {
-            return getLog(request)
+            return getLogById(request)
+        } else if(request['path'] && (String) request['path'].startsWith('?customer_id')) {
+            return getLogsByCustomer(request)
         }
         Map response = logService.getLogs()
         response.status == RestStatus.OK ?

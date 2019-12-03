@@ -9,6 +9,7 @@ import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
+import org.elasticsearch.index.query.MatchQueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.rest.RestStatus
 import org.elasticsearch.search.builder.SearchSourceBuilder
@@ -35,6 +36,18 @@ class LogService {
         }
         Map result = response.sourceAsMap
         ["status" : RestStatus.OK, "content" : result]
+    }
+
+    Map getLogsByCustomer(String customerID) {
+        SearchRequest searchRequest = new SearchRequest(indices: "logs")
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
+        MatchQueryBuilder matchQueryBuilder = new MatchQueryBuilder("customer_id", customerID)
+        searchSourceBuilder.query(matchQueryBuilder)
+        searchRequest.source(searchSourceBuilder)
+        SearchResponse response = client.search(searchRequest, RequestOptions.DEFAULT)
+        RestStatus responseStatus = response.status()
+        List<Map> results = response.hits.collect { it.sourceAsMap }
+        ["status" : responseStatus, "num_results" : results.size(), "content" : results]
     }
 
     Map getLogs() {
