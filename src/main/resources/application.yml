@@ -2,7 +2,12 @@
 micronaut:
   application:
     name: logstore
-
+  server:
+    cors:
+      enabled: true
+---
+jackson:
+  serialization-inclusion: "always"
 ---
 elasticsearch:
   datastoreImpl: hibernate
