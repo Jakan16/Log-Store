@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   logstore:
-    image: docker.io/logops/log-store:1.0.0-SNAPSHOT
+    image: docker.io/logops/log-store:1.0.0
     #build:
     #  context: .
     #  dockerfile: Dockerfile
