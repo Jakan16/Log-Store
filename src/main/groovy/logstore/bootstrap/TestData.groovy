@@ -4,10 +4,10 @@ import logstore.domain.LogModel
 
 class TestData {
 
-    static LogModel createLog(String agentID) {
+    static LogModel createLog(String logID, String customerID, String agentID) {
         LogModel log = new LogModel(
-                logID: "5",
-                customerID: "customer_1",
+                logID: logID,
+                customerID: customerID,
                 agentID: agentID,
                 timestamp: "24-11-2019",
                 logType: "log",

@@ -31,9 +31,6 @@ class GatewayControllerSpec extends Specification {
 
         then:
         HttpClientResponseException e = thrown()
-        println e.status
-        println e.message
-        println e.response.body()
         e.status == HttpStatus.BAD_REQUEST
         'error' in e.response.body()
     }

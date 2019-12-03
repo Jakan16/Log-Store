@@ -1,7 +1,6 @@
 package logstore.controller
 
 import io.micronaut.http.HttpResponse
-import logstore.bootstrap.TestData
 import logstore.domain.LogModel
 import logstore.service.LogService
 import org.elasticsearch.rest.RestStatus
@@ -29,9 +28,10 @@ class LogController {
                 HttpResponse.serverError(["error" : "something went wrong when saving the log"])
     }
 
-    HttpResponse getLogById(Map request) {
+    /*
+    HttpResponse getLogsById(Map request) {
         String pathVariable = request['path'].substring(1)
-        Map response = logService.getLogById(pathVariable)
+        Map response = logService.getLogsById(pathVariable)
         if (response.status == RestStatus.OK) {
             return HttpResponse.ok(response.content)
         }
@@ -40,10 +40,23 @@ class LogController {
         }
         HttpResponse.serverError(["error" : "something went wrong when retrieving the log"])
     }
+    */
 
     HttpResponse getLogsByCustomer(Map request) {
         String pathVariable = request['path'].substring('?customer_id='.length())
         Map response = logService.getLogsByCustomer(pathVariable)
+        if (response.status == RestStatus.OK) {
+            return HttpResponse.ok(["results" : response.num_results, "content" : response.content])
+        }
+        if (response.status in errors) {
+            return (HttpResponse) errors[response.status]
+        }
+        HttpResponse.serverError(["error" : "something went wrong when retrieving the log"])
+    }
+
+    HttpResponse getLogByLogID(Map request) {
+        String pathVariable = request['path'].substring(1)
+        Map response = logService.getLogByLogID(pathVariable)
         if (response.status == RestStatus.OK) {
             return HttpResponse.ok(response.content)
         }
@@ -54,10 +67,16 @@ class LogController {
     }
 
     HttpResponse getLogs(Map request) {
-        if(request['path'] && (String) request['path'].startsWith('/')) {
-            return getLogById(request)
-        } else if(request['path'] && (String) request['path'].startsWith('?customer_id')) {
+        //if(request['path'] && (String) request['path'][0] == '/') {
+        //    return getLogsById(request)
+        //}
+        //else
+        if(request['path'] && (int) request['path'].length() >= 13 &&
+                (String) request['path'].substring(0,13) == '?customer_id=') {
             return getLogsByCustomer(request)
+        }
+        else if(request['path'] && (String) request['path'][0] == '/') {
+            return getLogByLogID(request)
         }
         Map response = logService.getLogs()
         response.status == RestStatus.OK ?

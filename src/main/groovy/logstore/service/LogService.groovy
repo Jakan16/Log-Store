@@ -1,8 +1,6 @@
 package logstore.service
 
 import logstore.domain.LogModel
-import org.elasticsearch.action.get.GetRequest
-import org.elasticsearch.action.get.GetResponse
 import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.index.IndexResponse
 import org.elasticsearch.action.search.SearchRequest
@@ -28,7 +26,8 @@ class LogService {
         ['status' : response.status(), 'id' : response.id]
     }
 
-    Map getLogById(String id) {
+    /*
+    Map getLogsById(String id) {
         GetRequest getIdRequest = new GetRequest(index: "logs", id: id)
         GetResponse response = client.get(getIdRequest, RequestOptions.DEFAULT)
         if (!response.exists) {
@@ -37,9 +36,10 @@ class LogService {
         Map result = response.sourceAsMap
         ["status" : RestStatus.OK, "content" : result]
     }
+    */
 
     Map getLogsByCustomer(String customerID) {
-        SearchRequest searchRequest = new SearchRequest(indices: "logs")
+        SearchRequest searchRequest = new SearchRequest("logs")
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
         MatchQueryBuilder matchQueryBuilder = new MatchQueryBuilder("customer_id", customerID)
         searchSourceBuilder.query(matchQueryBuilder)
@@ -48,6 +48,20 @@ class LogService {
         RestStatus responseStatus = response.status()
         List<Map> results = response.hits.collect { it.sourceAsMap }
         ["status" : responseStatus, "num_results" : results.size(), "content" : results]
+    }
+
+    Map getLogByLogID(String logID) {
+        SearchRequest searchRequest = new SearchRequest("logs")
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
+        MatchQueryBuilder matchQueryBuilder = new MatchQueryBuilder("log_id", logID)
+        searchSourceBuilder.query(matchQueryBuilder)
+        searchRequest.source(searchSourceBuilder)
+        SearchResponse response = client.search(searchRequest, RequestOptions.DEFAULT)
+        if (response.hits.hits.length != 1) {
+            return ["status" : RestStatus.NOT_FOUND, "content" : null]
+        }
+        Map result = response.hits.collect { it.sourceAsMap }[0]
+        ["status" : RestStatus.OK, "content" : result]
     }
 
     Map getLogs() {
