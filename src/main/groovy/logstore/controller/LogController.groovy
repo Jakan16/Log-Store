@@ -16,6 +16,8 @@ class LogController {
     HttpResponse saveLog(Map request) {
         Map fields = (Map) request['body']
         LogModel log = new LogModel(
+                logID: fields['log_id'],
+                customerID: fields['customer_id'],
                 agentID: fields['agent_id'],
                 timestamp: fields['timestamp'],
                 logType: fields['log_type'],

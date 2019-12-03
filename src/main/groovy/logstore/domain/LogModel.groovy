@@ -2,6 +2,10 @@ package logstore.domain
 
 class LogModel {
 
+    String logID
+
+    String customerID
+
     String agentID
 
     String timestamp
@@ -14,6 +18,8 @@ class LogModel {
 
     Map toMap() {
         Map fields = [
+                "log_id" : logID,
+                "customer_id" : customerID,
                 "agent_id" : agentID,
                 "timestamp" : timestamp,
                 "log_type" : logType,

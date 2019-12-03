@@ -6,8 +6,10 @@ services:
     #  context: .
     #  dockerfile: Dockerfile
     ports:
-      - 8080:8080
+      - "8080:8080"
     network_mode: host
+    environment:
+      ELASTIC_HOST: http://localhost:9200
     depends_on:
       - esdb
 
@@ -16,7 +18,6 @@ services:
     container_name: esdb
     ports:
       - "9200:9200"
-      - "9300:9300"
     environment:
       - "discovery.type=single-node"
       - "cluster.name=esdb"
@@ -24,9 +25,9 @@ services:
       - "http.cors.enabled=true"
       # - "transport.host=127.0.0.1"
       - "xpack.security.enabled=false"
-    #volumes:
+    volumes:
       # create a data_db dir, likely in /var/lib/docker/volumes
-      # - "esdb:/usr/share/elasticsearch/data"
+      - "esdb:/usr/share/elasticsearch/data"
 
-# volumes:
-  # esdb:
+volumes:
+  esdb:
