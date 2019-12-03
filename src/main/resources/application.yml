@@ -6,7 +6,7 @@ micronaut:
 ---
 elasticsearch:
   datastoreImpl: hibernate
-  httpHosts: ${ELASTIC_HOST:http://localhost:9200}
+  httpHosts: ${ELASTIC_HOST:`http://localhost:9200`}
   cluster.name: esdb
   disableAutoIndex: false
   bulkIndexOnStartup: true
