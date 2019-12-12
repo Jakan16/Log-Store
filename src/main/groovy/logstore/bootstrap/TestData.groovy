@@ -9,7 +9,7 @@ class TestData {
                 logID: logID,
                 customerID: customerID,
                 agentID: agentID,
-                timestamp: "24-11-2019",
+                timestamp: 1576197266777,
                 logType: "log",
                 tags: ["log"],
                 content: "log_field_1 : xyzxyz, log_field_2 : xyzxyz"
