@@ -41,6 +41,7 @@ class LogService {
     Map getLogsByCustomer(String customerID) {
         SearchRequest searchRequest = new SearchRequest("logs")
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
+        searchSourceBuilder.size(10000)
         MatchQueryBuilder matchQueryBuilder = new MatchQueryBuilder("customer_id", customerID)
         searchSourceBuilder.query(matchQueryBuilder)
         searchRequest.source(searchSourceBuilder)
@@ -53,6 +54,7 @@ class LogService {
     Map getLogByLogID(String logID) {
         SearchRequest searchRequest = new SearchRequest("logs")
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
+        searchSourceBuilder.size(10000)
         MatchQueryBuilder matchQueryBuilder = new MatchQueryBuilder("log_id", logID)
         searchSourceBuilder.query(matchQueryBuilder)
         searchRequest.source(searchSourceBuilder)
@@ -67,6 +69,7 @@ class LogService {
     Map getLogs() {
         SearchRequest logs = new SearchRequest("logs")
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
+        searchSourceBuilder.size(10000)
         searchSourceBuilder.query(QueryBuilders.matchAllQuery())
         logs.source(searchSourceBuilder)
         SearchResponse response = client.search(logs, RequestOptions.DEFAULT)

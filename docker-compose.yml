@@ -7,15 +7,20 @@ services:
     #  dockerfile: Dockerfile
     ports:
       - "8080:8080"
-    network_mode: host
+    expose:
+      - "8080"
+    networks:
+      - logstore
     environment:
-      ELASTIC_HOST: http://localhost:9200
+      ELASTIC_HOST: http://esdb:9200
     depends_on:
       - esdb
 
   esdb:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.4.2
     container_name: esdb
+    networks:
+      - logstore
     ports:
       - "9200:9200"
     environment:
@@ -31,3 +36,7 @@ services:
 
 volumes:
   esdb:
+
+networks:
+  logstore:
+
