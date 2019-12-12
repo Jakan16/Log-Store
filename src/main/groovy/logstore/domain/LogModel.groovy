@@ -8,7 +8,7 @@ class LogModel {
 
     String agentID
 
-    String timestamp
+    Long timestamp
 
     String logType
 

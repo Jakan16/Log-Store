@@ -8,6 +8,7 @@ micronaut:
 ---
 jackson:
   serialization-inclusion: "always"
+  date-format: "yyyy-MM-dd'T'HH:mm:ss'Z'"
 ---
 elasticsearch:
   datastoreImpl: hibernate

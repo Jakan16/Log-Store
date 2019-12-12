@@ -48,7 +48,8 @@ class LogService {
         SearchResponse response = client.search(searchRequest, RequestOptions.DEFAULT)
         RestStatus responseStatus = response.status()
         List<Map> results = response.hits.collect { it.sourceAsMap }
-        ["status" : responseStatus, "num_results" : results.size(), "content" : results]
+        List<Map> toReturn = results.each { it.timestamp = new Date((Long) it.timestamp) }
+        ["status" : responseStatus, "num_results" : results.size(), "content" : toReturn]
     }
 
     Map getLogByLogID(String logID) {
@@ -63,6 +64,7 @@ class LogService {
             return ["status" : RestStatus.NOT_FOUND, "content" : null]
         }
         Map result = response.hits.collect { it.sourceAsMap }[0]
+        result.timestamp = new Date((Long) result.timestamp)
         ["status" : RestStatus.OK, "content" : result]
     }
 
@@ -75,7 +77,8 @@ class LogService {
         SearchResponse response = client.search(logs, RequestOptions.DEFAULT)
         RestStatus responseStatus = response.status()
         List<Map> results = response.hits.collect { it.sourceAsMap }
-        ["status" : responseStatus, "num_results" : results.size(), "content" : results]
+        List<Map> toReturn = results.each { it.timestamp = new Date((Long) it.timestamp) }
+        ["status" : responseStatus, "num_results" : results.size(), "content" : toReturn]
     }
 
 }
