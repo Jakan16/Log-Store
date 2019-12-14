@@ -49,4 +49,5 @@ jobs:
     - docker-compose up -d --no-deps logstore
     - logout
     - echo Finished deployment
+    if: branch = master
     
