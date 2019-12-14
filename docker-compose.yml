@@ -1,14 +1,12 @@
 version: '3.3'
 services:
   logstore:
-    image: docker.io/logops/log-store:1.0.0
+    image: docker.io/logops/${LOG_STORE_IMAGE:-log-store}:${LOG_STORE_VERSION:-1.0.0}
     #build:
     #  context: .
     #  dockerfile: Dockerfile
     ports:
       - "8080:8080"
-    expose:
-      - "8080"
     networks:
       - logstore
     environment:
