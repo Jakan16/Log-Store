@@ -42,7 +42,7 @@ jobs:
     - echo Starting deployment
     - echo $secret_pass | gpg --passphrase-fd 0 $DEPLOY_PERMISSION.gpg
     - chmod 600 $DEPLOY_PERMISSION
-    - ssh -i $DEPLOY_PERMISSION -o StrictHostKeyChecking=no $DEPLOY_HOST -c "'cd log-store';'export LOG_STORE_IMAGE=$IMAGE_NAME && export LOG_STORE_VERSION=$VERSION';'docker-compose up -d --no-deps logstore';logout'"
+    - ssh -i $DEPLOY_PERMISSION -o StrictHostKeyChecking=no $DEPLOY_HOST -c "'cd log-store';'export LOG_STORE_IMAGE=$IMAGE_NAME && export LOG_STORE_VERSION=$VERSION';'docker-compose up -d --no-deps logstore';'logout'"
     - echo Finished deployment
     if: branch = master
     
