@@ -6,7 +6,7 @@ services:
 env:
   global:
   - IMAGE_NAME=log-store
-  - VERSION=1.0.1
+  - IMAGE_VERSION=1.0.0
   - secure: Ku5boa9WDBsq79GZGs/MtrrQ/wioDMBTs4N9q8x1MCgG/T0O/dJamQNFOlxZGiOj2OO0/YpiO8XVHo9ZR9LvGXt5akJCl3YaurHZ2c9Wr1dnM5G+GNtYP7gHcb7YgP7sKJcyhsyHaW0hcoctL1gh2Y7XMwWYbP6cUzZF2S4INzL+vHeqbICvRlYG7e99I0JDcxCvDy+WO5kHGko/4w6gZ0GSHUFqOAPg+HYQEm/G8sOLkuIC7MYqCL8XCopKsG60yhSLOL+rcT767S3o6mguzJWzR11kUyY2Qh56Fq0acr7dJ3AM/xmdOmdYND8R77Ao/OSV0KrGEvvf1R0OV/X7ioFpm2QyAvFZjNkpBTdgGZa65kQM74XesVwOW0Vnnx81DmN9eR3ulfcfKKxai0ZeaHpyEEGSXt/AU6sT74shfEAgoZyQl/AdrMzKwgIr4dX7Ep4e+JtPw+Fo4XEHEUrkHzt/BHm9RNhZlUS2WHiWan0nDPAx3E3xvIB0lkk34Hr9MRXqmL1UznXd1tj45ecBUOPohCcdbnPv+bSm7U3RY28N961SUyyeAHBiN7gcFxU4KIH5fQ5tH4Z7KLXahXXZBYj75m3FVRndaB4XI7dgRe5WoxSv/ewGX4t4Ls72hlb1erlgGwa7Jopc+Ovi7Q1BsVjFqQk+5QIU8UHyWtwHxMs=
 
 language: groovy
@@ -33,8 +33,8 @@ jobs:
     script:
     - "./gradlew assemble"
     - docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
-    - docker build -t "${DOCKER_USER}/${IMAGE_NAME}:${VERSION}" .
-    - docker push "${DOCKER_USER}/${IMAGE_NAME}:${VERSION}"
+    - docker build -t "${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_VERSION}" .
+    - docker push "${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_VERSION}"
     if: "(branch IN (master, stage, develop))"
 
   - stage: deploy
