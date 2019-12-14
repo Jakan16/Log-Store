@@ -1,11 +1,13 @@
 sudo: required
 
 services:
-  - docker
+- docker
+
 env:
   global:
-    - IMAGE_NAME=logops/log-store
-    - VERSION=1.0.0
+  - IMAGE_NAME=logops/log-store
+  - VERSION=1.0.0
+  - secure: pZ4RbsyMl7HGffCsjoC5orUcEunHPwTJYj4XgdpZuwTw+KtGk235dAT+q/SXHOvEwuihfpHdBnCTmRCNtBGrs0djZCY4qbdq7S7GnxQKsbxxoWjCnZmx110NiQuV9dsZyGIAg3BWmIOLBQhksShkJfHRFoztuEtZDRVRYuOy0bht2/+eDFD5EhOGenAARjc7gPFIom9bv4q1A1iUgyxFyRBwjN/kSTVDxxjoN4fLEkfJKHsfON5I7DRmcHyywnfERQdVcmEiPj/FEzJwsBNSdH7QHrwDyeJwsOjfDEXgB+RcXgYJr4auEnZfR5HYYY9zImntQgKmvtpWc/OMhbPKYala2NyeJqpP5Ac72LMLLKIrGoItvBwnhRXDi5xykM1wPhkTriWaBZSxrMbihHB/7ppIf+NMuPWLOG7NQOy3Okon//FqpBEt8mIA2gYb9X1bEII2+4ZO6DwcPaECyslnG8YWlTwxASAwdIWADZUqhm0i8Ih8BxMcQDT2zcA2NFyac7WNdo0WcsTxvDqsHIRUr4Ms9A9AE6iwaYzzOtcth0vL2bYoADiMomBn2T7U1JECFfsO7q8zN+P9nm8kKCHhFK+TGfF/hYWbG63+3P2jgPPYaaDz7WCoM6DB2eFDVhYW4aEJuZKKiAz/ljnGpJAmvFCVmFaeLZWDiQQPA4d6wiI=
 
 language: groovy
 install: true
@@ -13,25 +15,28 @@ os: linux
 dist: trusty
 jdk: oraclejdk11
 
+before_install:  
+  - echo $secret_pass | gpg --passphrase-fd 0 VM-LogOps-Deploy-2019.pem.gpg
+
 jobs:
   include:
-    - stage: unit-test
-      script:
-        - "echo Only performing unit tests"
-        - "./gradlew test --tests logstore.unit*"
-      if: (NOT (branch IN (master, stage, develop)))
+  - stage: unit-test
+    script:
+    - echo Only performing unit tests
+    - "./gradlew test --tests logstore.unit*"
+    if: "(NOT (branch IN (master, stage, develop)))"
 
-    - stage: test-all
-      script:
-        - "echo Running all tests"
-        - "./gradlew build -s"
-      if: (branch IN (master, stage, develop))
-      
-    - stage: build-deploy
-      script:
-        - "./gradlew assemble"
-        - docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
-        - docker build -t "${IMAGE_NAME}:${VERSION}" . 
-        - docker push "${IMAGE_NAME}:${VERSION}"
-        - "echo Deployment stuff"
-      if: (branch IN (master, stage, develop))
+  - stage: test-all
+    script:
+    - echo Running all tests
+    - "./gradlew build -s"
+    if: "(branch IN (master, stage, develop))"
+
+  - stage: build-deploy
+    script:
+    - "./gradlew assemble"
+    - docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
+    - docker build -t "${IMAGE_NAME}:${VERSION}" .
+    - docker push "${IMAGE_NAME}:${VERSION}"
+    - echo Deployment stuff
+    if: "(branch IN (master, stage, develop))"
