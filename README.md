@@ -18,7 +18,7 @@ Otherwise, you need to have Micronaut installed. You can the build the project b
 
 To start the service on port 8080, run:
 
-`./gradlw run`
+`./gradlew run`
 
 To run the tests, run the command:
 
